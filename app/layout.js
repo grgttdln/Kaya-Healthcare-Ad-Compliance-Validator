@@ -4,8 +4,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export const metadata = {
-  title: "Kaya Healthcare Ad Compliance",
-  description: "Compliance validator for healthcare ads",
+  title: "AdSafeCare",
+  description: "Compliance Validator for Healthcare Ads",
 };
 
 export default function RootLayout({ children }) {

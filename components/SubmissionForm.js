@@ -22,10 +22,14 @@ import Typography from "@mui/material/Typography";
 import ImagePreview from "./ImagePreview";
 
 const platforms = ["Meta", "Facebook", "Instagram", "Google Ads", "TikTok"];
-const categories = ["ED", "Hair loss", "Weight loss"];
-const creativeTypes = ["Single image", "Carousel", "Video"];
 
-export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
+export default function SubmissionForm({
+  value,
+  onChange,
+  onSubmit,
+  loading,
+  categories = ["OTC drugs", "Food/Dietary Supplements", "Alcohol"],
+}) {
   const [errors, setErrors] = React.useState({});
 
   const handleField = (field, val) => {
@@ -41,7 +45,9 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
     }
     if (!value.platform) next.platform = "Select a platform.";
     if (!value.category) next.category = "Select a category.";
-    if (!value.creativeType) next.creativeType = "Select a creative type.";
+    if (value.category === "custom" && !value.categoryCustom.trim()) {
+      next.categoryCustom = "Enter a category.";
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -84,7 +90,8 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
 
             <Box>
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                Image input
+                Image input (optional — used for OCR, before/after, nudity
+                flags)
               </Typography>
               <RadioGroup
                 row
@@ -157,7 +164,12 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
                 )}
               </FormControl>
 
-              <FormControl fullWidth error={Boolean(errors.category)}>
+              <FormControl
+                fullWidth
+                error={
+                  Boolean(errors.category) || Boolean(errors.categoryCustom)
+                }
+              >
                 <InputLabel id="category-label">Product category</InputLabel>
                 <Select
                   labelId="category-label"
@@ -171,42 +183,27 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
                       {c}
                     </MenuItem>
                   ))}
+                  <MenuItem value="custom">Custom (free form)</MenuItem>
                 </Select>
                 {errors.category && (
                   <FormHelperText error>{errors.category}</FormHelperText>
                 )}
+                {value.category === "custom" && (
+                  <Box sx={{ mt: 1 }}>
+                    <TextField
+                      label="Enter category"
+                      fullWidth
+                      value={value.categoryCustom}
+                      onChange={(e) =>
+                        handleField("categoryCustom", e.target.value)
+                      }
+                      error={Boolean(errors.categoryCustom)}
+                      helperText={errors.categoryCustom}
+                    />
+                  </Box>
+                )}
               </FormControl>
             </Stack>
-
-            <FormControl fullWidth error={Boolean(errors.creativeType)}>
-              <InputLabel id="creative-label">Creative type</InputLabel>
-              <Select
-                labelId="creative-label"
-                label="Creative type"
-                value={value.creativeType}
-                onChange={(e) => handleField("creativeType", e.target.value)}
-                required
-              >
-                {creativeTypes.map((c) => (
-                  <MenuItem key={c} value={c}>
-                    {c}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.creativeType && (
-                <FormHelperText error>{errors.creativeType}</FormHelperText>
-              )}
-            </FormControl>
-
-            <TextField
-              label="Advertiser proof (optional file)"
-              type="file"
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ accept: ".pdf,.png,.jpg,.jpeg" }}
-              onChange={(e) =>
-                handleField("advertiserProof", e.target.files?.[0] || null)
-              }
-            />
 
             <Divider />
 
@@ -232,8 +229,7 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
                     imageUrl: "",
                     platform: "Meta",
                     category: "Weight loss",
-                    creativeType: "Single image",
-                    advertiserProof: null,
+                    categoryCustom: "",
                   })
                 }
               >

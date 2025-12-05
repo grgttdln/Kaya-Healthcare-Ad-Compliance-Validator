@@ -12,7 +12,7 @@ function Copyright() {
     <Typography variant="body2" color="text.secondary" align="center">
       {"Copyright © "}
       <Link color="inherit" href="#">
-        Kaya Healthcare
+        AdSafeCare
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -40,7 +40,7 @@ export default function Footer() {
             align="center"
             sx={{ fontWeight: 800, letterSpacing: "-0.01em" }}
           >
-            Kaya Validator
+            AdSafeCare
           </Typography>
           <Typography
             variant="subtitle1"

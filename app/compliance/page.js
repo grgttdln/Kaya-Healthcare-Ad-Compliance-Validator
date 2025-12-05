@@ -9,10 +9,12 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import SubmissionForm from "../../components/SubmissionForm";
 import ReportView from "../../components/ReportView";
+import policies from "../../data/policies.json";
 
 export default function CompliancePage() {
   const [report, setReport] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = React.useState("");
   const [formState, setFormState] = React.useState({
     marketingCopy: "",
     imageMode: "upload",
@@ -20,8 +22,7 @@ export default function CompliancePage() {
     imageUrl: "",
     platform: "Meta",
     category: "Weight loss",
-    creativeType: "Single image",
-    advertiserProof: null,
+    categoryCustom: "",
   });
   const [toast, setToast] = React.useState({
     open: false,
@@ -29,27 +30,43 @@ export default function CompliancePage() {
     severity: "success",
   });
 
+  React.useEffect(() => {
+    let objectUrl;
+    if (formState.imageMode === "upload" && formState.imageFile) {
+      objectUrl = URL.createObjectURL(formState.imageFile);
+      setImagePreviewUrl(objectUrl);
+    } else if (formState.imageMode === "url" && formState.imageUrl) {
+      setImagePreviewUrl(formState.imageUrl);
+    } else {
+      setImagePreviewUrl("");
+    }
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [formState.imageMode, formState.imageFile, formState.imageUrl]);
+
   const handleSubmit = async (payload) => {
     // Normalize field names to match API expectations
     const normalized = {
       copy: payload.marketingCopy,
       platform: payload.platform,
-      productCategory: payload.category,
-      creativeType: payload.creativeType,
+      productCategory:
+        payload.category === "custom" && payload.categoryCustom
+          ? payload.categoryCustom
+          : payload.category,
       imageFile: payload.imageFile,
       imageUrl: payload.imageUrl,
-      advertiserProof: payload.advertiserProof,
     };
 
     setLoading(true);
     try {
-      const hasFile = !!normalized.imageFile || !!normalized.advertiserProof;
+      const hasFile = !!normalized.imageFile;
       let res;
       if (hasFile) {
         const formData = new FormData();
         Object.entries(normalized).forEach(([key, value]) => {
           if (value !== null && value !== undefined) {
-            if (key === "imageFile" || key === "advertiserProof") {
+            if (key === "imageFile") {
               if (value) formData.append(key, value);
             } else {
               formData.append(key, value);
@@ -104,7 +121,7 @@ export default function CompliancePage() {
     <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
-          AI Compliance Gate
+          AdSafeCare
         </Typography>
         <Typography
           variant="h3"
@@ -124,6 +141,7 @@ export default function CompliancePage() {
             onChange={setFormState}
             onSubmit={handleSubmit}
             loading={loading}
+            categories={policies.productCategories?.map((c) => c.name) || []}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -132,6 +150,7 @@ export default function CompliancePage() {
             onApplySuggestedFix={handleApplySuggestedFix}
             onExport={handleExport}
             marketingCopy={formState.marketingCopy}
+            imagePreviewUrl={imagePreviewUrl}
           />
         </Grid>
       </Grid>

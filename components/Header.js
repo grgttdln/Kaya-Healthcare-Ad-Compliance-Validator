@@ -32,13 +32,13 @@ export default function Header() {
             sx={{ flexGrow: 1 }}
           >
             <Chip
-              label="Kaya Validator"
+              label="AdSafeCare"
               color="primary"
               variant="filled"
               sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
             />
             <Typography variant="body2" color="text.secondary">
-              Compliance made simple
+              Compliance Validator for Healthcare Ads
             </Typography>
           </Stack>
 

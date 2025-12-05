@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Alert from "@mui/material/Alert";
 import ImagePreview from "./ImagePreview";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const severityColor = {
   critical: "error",
@@ -24,8 +25,15 @@ export default function ReportView({
   onApplySuggestedFix,
   onExport,
   marketingCopy,
+  imagePreviewUrl,
 }) {
   const statusColor = report?.status === "pass" ? "success" : "error";
+  const boxes = report?.imageAnnotations || [];
+  const imageInsights = report?.imageInsights || {};
+  const imageAnalyzed = report?.meta?.imageAnalyzed;
+  const imageSource = report?.meta?.imageSource;
+  const reportImageUrl = report?.meta?.imageUrl || "";
+  const previewUrl = imagePreviewUrl || reportImageUrl || null;
 
   return (
     <Card
@@ -102,9 +110,21 @@ export default function ReportView({
                     <Typography color="text.secondary">
                       {v.explanation}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Confidence: {(v.confidence * 100).toFixed(1)}%
-                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        Confidence
+                      </Typography>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={Math.round((v.confidence || 0) * 100)}
+                          sx={{ height: 6, borderRadius: 999 }}
+                        />
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {(v.confidence * 100).toFixed(0)}%
+                      </Typography>
+                    </Box>
                     <Typography variant="body2" color="text.secondary">
                       Suggested fix: {v.suggestedFix}
                     </Typography>
@@ -134,7 +154,50 @@ export default function ReportView({
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Image preview (mocked annotations)
             </Typography>
-            <ImagePreview imageUrl={null} boxes={[]} />
+            <Stack spacing={1}>
+              <ImagePreview imageUrl={previewUrl} boxes={boxes} />
+              <Stack direction="row" spacing={1} flexWrap="wrap">
+                <Chip
+                  label={
+                    imageAnalyzed
+                      ? `Image analyzed${
+                          imageSource ? ` • ${imageSource}` : ""
+                        }`
+                      : "No image provided"
+                  }
+                  color={imageAnalyzed ? "success" : "default"}
+                  size="small"
+                />
+                {imageAnalyzed ? (
+                  <>
+                    <Chip
+                      label={`Nudity: ${imageInsights.nudityLabel || "none"}`}
+                      color={
+                        imageInsights.nudityLabel === "possible"
+                          ? "warning"
+                          : "default"
+                      }
+                      size="small"
+                    />
+                    <Chip
+                      label={
+                        imageInsights.beforeAfterDetected
+                          ? "Before/After detected"
+                          : "Before/After not detected"
+                      }
+                      color={
+                        imageInsights.beforeAfterDetected
+                          ? "warning"
+                          : "default"
+                      }
+                      size="small"
+                    />
+                  </>
+                ) : null}
+              </Stack>
+            </Stack>
+
+            {imageAnalyzed ? <Box /> : null}
           </>
         )}
       </CardContent>
