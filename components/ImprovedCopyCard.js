@@ -15,7 +15,11 @@ import AutoFixHighRoundedIcon from "@mui/icons-material/AutoFixHighRounded";
 import CompareArrowsRoundedIcon from "@mui/icons-material/CompareArrowsRounded";
 import Collapse from "@mui/material/Collapse";
 
-export default function ImprovedCopyCard({ improvedCopy, originalCopy, onApply }) {
+export default function ImprovedCopyCard({
+  improvedCopy,
+  originalCopy,
+  onApply,
+}) {
   const [showComparison, setShowComparison] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
 
@@ -96,14 +100,6 @@ export default function ImprovedCopyCard({ improvedCopy, originalCopy, onApply }
                 </Typography>
               </Stack>
             </Stack>
-            {improvedCopy.confidence > 0 && (
-              <Chip
-                label={`${Math.round(improvedCopy.confidence * 100)}% confidence`}
-                color={confidenceColor}
-                size="small"
-                sx={{ fontWeight: 700 }}
-              />
-            )}
           </Stack>
 
           {/* Improved Copy Display */}
@@ -274,4 +270,3 @@ export default function ImprovedCopyCard({ improvedCopy, originalCopy, onApply }
     </Card>
   );
 }
-

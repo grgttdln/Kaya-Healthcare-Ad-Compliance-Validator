@@ -57,19 +57,7 @@ export default function Hero() {
             direction={{ xs: "column", sm: "row" }}
             spacing={2}
             justifyContent="center"
-          >
-            <Button variant="contained" size="large" color="secondary">
-              Get started
-            </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              color="inherit"
-              sx={{ borderColor: "rgba(255,255,255,0.7)" }}
-            >
-              Watch demo
-            </Button>
-          </Stack>
+          ></Stack>
         </Box>
       </Container>
     </Box>

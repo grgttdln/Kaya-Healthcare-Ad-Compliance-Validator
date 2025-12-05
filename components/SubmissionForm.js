@@ -21,7 +21,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import ImagePreview from "./ImagePreview";
 
-const platforms = ["Meta", "Facebook", "Instagram", "Google Ads", "TikTok"];
+const platforms = ["Meta", "Google Ads", "TikTok"];
 
 export default function SubmissionForm({
   value,
@@ -29,7 +29,11 @@ export default function SubmissionForm({
   onSubmit,
   onReset,
   loading,
-  categories = ["OTC drugs", "Food/Dietary Supplements", "Alcohol"],
+  categories = [
+    "Weight Loss Products",
+    "OTC Medications",
+    "Dietary Supplements",
+  ],
 }) {
   const [errors, setErrors] = React.useState({});
 

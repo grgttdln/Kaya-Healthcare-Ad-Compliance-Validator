@@ -16,6 +16,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import Grid from "@mui/material/Grid";
 import ImagePreview from "./ImagePreview";
 import ImprovedCopyCard from "./ImprovedCopyCard";
+import HighlightedCopy from "./HighlightedCopy";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import HubRoundedIcon from "@mui/icons-material/HubRounded";
@@ -567,6 +568,22 @@ export default function ReportView({
               </Grid>
             </Stack>
 
+            {/* Highlighted Original Copy Section */}
+            {marketingCopy && allViolations.length > 0 && (
+              <>
+                <Divider />
+                <Stack spacing={1}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                    Highlighted violations in copy
+                  </Typography>
+                  <HighlightedCopy
+                    copy={marketingCopy}
+                    violations={allViolations}
+                  />
+                </Stack>
+              </>
+            )}
+
             {/* Improved Copy Section */}
             {report?.improvedCopy && (
               <>
@@ -579,72 +596,36 @@ export default function ReportView({
               </>
             )}
 
-            <Divider />
-
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-              Image preview
-              {boxes.length > 0 && (
-                <Typography
-                  component="span"
-                  sx={{
-                    ml: 1,
-                    px: 1,
-                    py: 0.25,
-                    backgroundColor: "rgba(255,0,0,0.1)",
-                    color: "#b91c1c",
-                    borderRadius: 1,
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  {boxes.length} region{boxes.length > 1 ? "s" : ""} highlighted
-                </Typography>
-              )}
-            </Typography>
-            <Stack spacing={1}>
-              <ImagePreview imageUrl={previewUrl} boxes={boxes} />
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                <Chip
-                  label={
-                    imageAnalyzed
-                      ? `Image analyzed${
-                          imageSource ? ` • ${imageSource}` : ""
-                        }`
-                      : "No image provided"
-                  }
-                  color={imageAnalyzed ? "success" : "default"}
-                  size="small"
-                />
-                {imageAnalyzed ? (
-                  <>
-                    <Chip
-                      label={`Nudity: ${imageInsights.nudityLabel || "none"}`}
-                      color={
-                        imageInsights.nudityLabel === "possible"
-                          ? "warning"
-                          : "default"
-                      }
-                      size="small"
-                    />
-                    <Chip
-                      label={
-                        imageInsights.beforeAfterDetected
-                          ? "Before/After detected"
-                          : "Before/After not detected"
-                      }
-                      color={
-                        imageInsights.beforeAfterDetected
-                          ? "warning"
-                          : "default"
-                      }
-                      size="small"
-                    />
-                  </>
-                ) : null}
-              </Stack>
-            </Stack>
-
-            {imageAnalyzed ? <Box /> : null}
+            {previewUrl && (
+              <>
+                <Divider />
+                <Stack spacing={1.5}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                      Image preview
+                    </Typography>
+                    {boxes.length > 0 && (
+                      <Chip
+                        label={`${boxes.length} region${
+                          boxes.length > 1 ? "s" : ""
+                        } flagged`}
+                        size="small"
+                        sx={{
+                          backgroundColor: "rgba(239, 68, 68, 0.12)",
+                          color: "#b91c1c",
+                          fontWeight: 700,
+                        }}
+                      />
+                    )}
+                  </Stack>
+                  <ImagePreview imageUrl={previewUrl} boxes={boxes} />
+                </Stack>
+              </>
+            )}
           </>
         )}
       </CardContent>
