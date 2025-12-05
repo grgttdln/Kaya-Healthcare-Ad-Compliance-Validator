@@ -1,12 +1,17 @@
 {
   "productCategories": [
-    { "name": "OTC drugs", "regulated": true, "requires_prescreen": true },
-    { "name": "Food/Dietary Supplements", "regulated": true, "requires_prescreen": true },
-    { "name": "Alcohol", "regulated": true, "requires_prescreen": true },
-    { "name": "Milk Code products", "regulated": true, "requires_prescreen": true },
-    { "name": "Airline promo fares", "regulated": true, "requires_prescreen": true },
-    { "name": "Consumer Electronics", "regulated": false, "requires_prescreen": false },
-    { "name": "Cosmetics", "regulated": false, "requires_prescreen": false }
+    { "name": "Weight Loss Products", "regulated": true, "requires_prescreen": true },
+    { "name": "OTC Medications", "regulated": true, "requires_prescreen": true },
+    { "name": "Prescription Drugs", "regulated": true, "requires_prescreen": true },
+    { "name": "Dietary Supplements", "regulated": true, "requires_prescreen": true },
+    { "name": "Medical Devices", "regulated": true, "requires_prescreen": true },
+    { "name": "Healthcare Services", "regulated": true, "requires_prescreen": true },
+    { "name": "Telemedicine/Telehealth", "regulated": true, "requires_prescreen": true },
+    { "name": "Mental Health Services", "regulated": true, "requires_prescreen": true },
+    { "name": "Dental Services", "regulated": false, "requires_prescreen": false },
+    { "name": "Beauty & Cosmetic Procedures", "regulated": true, "requires_prescreen": true },
+    { "name": "Fitness & Wellness Programs", "regulated": false, "requires_prescreen": false },
+    { "name": "Health Insurance", "regulated": true, "requires_prescreen": true }
   ],
   "claimsRequiringPreScreen": [
     { "id": "PRE-1", "slug": "no1_claim", "description": "No.1 / leadership claims need substantiation and pre-screen", "examples": ["No.1 brand", "Leading product"] },

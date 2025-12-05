@@ -11,7 +11,7 @@ export default function ImagePreview({ imageUrl, boxes = [] }) {
     <Paper
       variant="outlined"
       sx={{
-        height: 220,
+        height: 700,
         borderRadius: 2,
         borderColor: "grey.200",
         display: "flex",
@@ -40,16 +40,38 @@ export default function ImagePreview({ imageUrl, boxes = [] }) {
           key={idx}
           sx={{
             position: "absolute",
-            border: "2px solid rgba(255,0,0,0.6)",
+            border: "3px solid rgba(255,0,0,0.8)",
             borderRadius: 1,
             left: box.x,
             top: box.y,
             width: box.width,
             height: box.height,
             pointerEvents: "none",
+            backgroundColor: "rgba(255,0,0,0.1)",
           }}
           aria-label={box.label || "Violation region"}
-        />
+        >
+          {box.label && (
+            <Typography
+              variant="caption"
+              sx={{
+                position: "absolute",
+                top: -24,
+                left: 0,
+                backgroundColor: "rgba(255,0,0,0.9)",
+                color: "white",
+                px: 1,
+                py: 0.25,
+                borderRadius: 0.5,
+                fontWeight: 700,
+                fontSize: 11,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {box.label}
+            </Typography>
+          )}
+        </Box>
       ))}
     </Paper>
   );

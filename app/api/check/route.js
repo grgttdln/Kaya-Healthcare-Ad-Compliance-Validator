@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { complianceEngine } from "../../../lib/complianceEngine";
+import { generateImprovedCopy } from "../../../lib/copyImprover";
 
 const REQUIRED_FIELDS = ["copy", "platform", "productCategory"];
 
@@ -64,7 +65,26 @@ export async function POST(req) {
     }
 
     const report = await complianceEngine(payload);
-    return NextResponse.json(report, { status: 200 });
+
+    // Generate improved copy ONLY if there are TEXT violations
+    // (skip if only image violations exist)
+    let improvedCopy = null;
+    if (report.violations && report.violations.length > 0) {
+      const hasTextViolations = report.violations.some(
+        (v) => v.offendingText || !v.offendingImageRegion
+      );
+
+      if (hasTextViolations) {
+        improvedCopy = await generateImprovedCopy({
+          originalCopy: payload.copy,
+          violations: report.violations,
+          platform: payload.platform,
+          productCategory: payload.productCategory,
+        });
+      }
+    }
+
+    return NextResponse.json({ ...report, improvedCopy }, { status: 200 });
   } catch (err) {
     console.error("POST /api/check error", err);
     return NextResponse.json(

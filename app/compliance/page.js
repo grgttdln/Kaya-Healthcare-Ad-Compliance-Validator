@@ -21,7 +21,7 @@ export default function CompliancePage() {
     imageFile: null,
     imageUrl: "",
     platform: "Meta",
-    category: "Weight loss",
+    category: "Weight Loss Products",
     categoryCustom: "",
   });
   const [toast, setToast] = React.useState({
