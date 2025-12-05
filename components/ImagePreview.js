@@ -11,7 +11,7 @@ export default function ImagePreview({ imageUrl, boxes = [] }) {
     <Paper
       variant="outlined"
       sx={{
-        height: 500,
+        height: 700,
         borderRadius: 2,
         borderColor: "grey.200",
         display: "flex",

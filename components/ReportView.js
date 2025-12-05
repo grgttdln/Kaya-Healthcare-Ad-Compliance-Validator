@@ -15,6 +15,7 @@ import Collapse from "@mui/material/Collapse";
 import ButtonBase from "@mui/material/ButtonBase";
 import Grid from "@mui/material/Grid";
 import ImagePreview from "./ImagePreview";
+import ImprovedCopyCard from "./ImprovedCopyCard";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import HubRoundedIcon from "@mui/icons-material/HubRounded";
@@ -102,7 +103,6 @@ export default function ReportView({
   }, [report?.violations]);
 
   const [openGroups, setOpenGroups] = React.useState(new Set(violationGroups));
-  const [expandedCards, setExpandedCards] = React.useState(new Set());
 
   const allViolations = report?.violations || [];
   const severityCounts = React.useMemo(() => {
@@ -122,7 +122,6 @@ export default function ReportView({
       violationGroups.filter((key) => (groupedViolations[key] || []).length > 0)
     );
     setOpenGroups(defaults.size ? defaults : new Set(violationGroups));
-    setExpandedCards(new Set());
   }, [report?.violations, groupedViolations]);
 
   const toggleGroup = (key) => {
@@ -132,18 +131,6 @@ export default function ReportView({
         next.delete(key);
       } else {
         next.add(key);
-      }
-      return next;
-    });
-  };
-
-  const toggleCard = (id) => {
-    setExpandedCards((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
       }
       return next;
     });
@@ -170,7 +157,7 @@ export default function ReportView({
             onClick={onExport}
             disabled={!report}
           >
-            Export JSON
+            Export Compliance Report JSON
           </Button>
         }
       />
@@ -183,7 +170,12 @@ export default function ReportView({
           </Alert>
         ) : (
           <>
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              flexWrap="wrap"
+            >
               <Chip
                 label={`Score: ${report.complianceScore}/100`}
                 color={statusColor}
@@ -195,6 +187,36 @@ export default function ReportView({
                 color={statusColor}
                 variant="outlined"
               />
+              {report?.meta?.platform && (
+                <Chip
+                  label={`${report.meta.platform}`}
+                  size="small"
+                  variant="outlined"
+                  sx={{ fontWeight: 600 }}
+                />
+              )}
+              {report?.meta?.platformStrictness && (
+                <Chip
+                  label={`${report.meta.platformStrictness}x strictness`}
+                  size="small"
+                  color={
+                    report.meta.platformStrictness >= 1.4
+                      ? "error"
+                      : report.meta.platformStrictness >= 1.2
+                      ? "warning"
+                      : "default"
+                  }
+                  sx={{ fontWeight: 600 }}
+                />
+              )}
+              {report?.meta?.categoryRisk && report.meta.categoryRisk > 1.0 && (
+                <Chip
+                  label={`${report.meta.categoryRisk}x category risk`}
+                  size="small"
+                  color="warning"
+                  sx={{ fontWeight: 600 }}
+                />
+              )}
             </Stack>
 
             <Divider />
@@ -372,25 +394,20 @@ export default function ReportView({
                                 const severityStyle = getSeverityStyle(
                                   v.severity
                                 );
-                                const isExpanded = expandedCards.has(v.id);
+
                                 return (
                                   <Box
                                     key={v.id}
-                                    onClick={() => toggleCard(v.id)}
                                     sx={{
                                       p: { xs: 1.5, sm: 1.75 },
                                       borderRadius: 1.25,
                                       border: "1px solid",
                                       borderColor: severityStyle.border,
                                       backgroundColor: "#fff",
-                                      cursor: "pointer",
+                                      cursor: "default",
                                       transition: "all 0.15s ease",
                                       boxShadow:
                                         "0 1px 3px rgba(15, 23, 42, 0.06)",
-                                      "&:hover": {
-                                        boxShadow:
-                                          "0 6px 14px rgba(15, 23, 42, 0.08)",
-                                      },
                                       height: "100%",
                                       width: "100%",
                                     }}
@@ -466,12 +483,7 @@ export default function ReportView({
                                           variant="body2"
                                           color="text.secondary"
                                           sx={{
-                                            display: "-webkit-box",
-                                            WebkitLineClamp: isExpanded
-                                              ? "unset"
-                                              : 2,
-                                            WebkitBoxOrient: "vertical",
-                                            overflow: "hidden",
+                                            whiteSpace: "pre-wrap",
                                           }}
                                         >
                                           {v.explanation}
@@ -503,12 +515,8 @@ export default function ReportView({
                                               px: 1.25,
                                               py: 0.6,
                                               border: "1px solid #e2e8f0",
-                                              display: "-webkit-box",
-                                              WebkitLineClamp: isExpanded
-                                                ? "unset"
-                                                : 2,
-                                              WebkitBoxOrient: "vertical",
-                                              overflow: "hidden",
+                                              whiteSpace: "pre-wrap",
+                                              wordBreak: "break-word",
                                               mt: 0.25,
                                             }}
                                           >
@@ -546,85 +554,6 @@ export default function ReportView({
                                         </Stack>
                                       ) : null}
                                     </Stack>
-
-                                    <Collapse in={isExpanded}>
-                                      <Box
-                                        sx={{
-                                          mt: 1.5,
-                                          pt: 1.25,
-                                          borderTop: "1px solid",
-                                          borderColor: "divider",
-                                          display: "grid",
-                                          gap: 1.25,
-                                        }}
-                                      >
-                                        <Stack spacing={0.35}>
-                                          <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                            sx={{
-                                              fontWeight: 700,
-                                              letterSpacing: 0.2,
-                                              textTransform: "uppercase",
-                                            }}
-                                          >
-                                            Plain-language detail
-                                          </Typography>
-                                          <Typography
-                                            variant="body2"
-                                            color="text.primary"
-                                          >
-                                            {v.explanation}
-                                          </Typography>
-                                        </Stack>
-                                        <Stack spacing={0.35}>
-                                          <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                            sx={{
-                                              fontWeight: 700,
-                                              letterSpacing: 0.2,
-                                              textTransform: "uppercase",
-                                            }}
-                                          >
-                                            Suggested wording
-                                          </Typography>
-                                          <Typography
-                                            variant="body2"
-                                            color="text.secondary"
-                                          >
-                                            {v.suggestedFix}
-                                          </Typography>
-                                        </Stack>
-                                        <Stack direction="row" spacing={1}>
-                                          <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              onApplySuggestedFix(
-                                                v.suggestedFix.replace(
-                                                  "Replace with: ",
-                                                  ""
-                                                )
-                                              );
-                                            }}
-                                          >
-                                            Apply fix
-                                          </Button>
-                                          <Button
-                                            variant="text"
-                                            size="small"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              onExport();
-                                            }}
-                                          >
-                                            Export
-                                          </Button>
-                                        </Stack>
-                                      </Box>
-                                    </Collapse>
                                   </Box>
                                 );
                               })}
@@ -637,6 +566,18 @@ export default function ReportView({
                 })}
               </Grid>
             </Stack>
+
+            {/* Improved Copy Section */}
+            {report?.improvedCopy && (
+              <>
+                <Divider />
+                <ImprovedCopyCard
+                  improvedCopy={report.improvedCopy}
+                  originalCopy={marketingCopy}
+                  onApply={onApplySuggestedFix}
+                />
+              </>
+            )}
 
             <Divider />
 
