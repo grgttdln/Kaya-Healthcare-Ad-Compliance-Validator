@@ -1,0 +1,13 @@
+{
+  "prohibitedWords": ["cure", "miracle", "guaranteed results", "FDA-approved"],
+  "platformOverrides": {
+    "Meta": {
+      "beforeAfter": "critical",
+      "medicalClaims": "critical"
+    },
+    "Google Ads": {
+      "medicalClaims": "warning"
+    }
+  }
+}
+

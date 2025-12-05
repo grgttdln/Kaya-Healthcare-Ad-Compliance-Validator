@@ -1,0 +1,145 @@
+"use client";
+
+import * as React from "react";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import SubmissionForm from "../../components/SubmissionForm";
+import ReportView from "../../components/ReportView";
+
+export default function CompliancePage() {
+  const [report, setReport] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+  const [formState, setFormState] = React.useState({
+    marketingCopy: "",
+    imageMode: "upload",
+    imageFile: null,
+    imageUrl: "",
+    platform: "Meta",
+    category: "Weight loss",
+    creativeType: "Single image",
+    advertiserProof: null,
+    variantName: "",
+  });
+  const [toast, setToast] = React.useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSubmit = async (payload) => {
+    setLoading(true);
+    try {
+      const hasFile = payload.imageFile || payload.advertiserProof;
+      let res;
+      if (hasFile) {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== null && value !== undefined) {
+            if (key === "imageFile" || key === "advertiserProof") {
+              if (value) formData.append(key, value);
+            } else {
+              formData.append(key, value);
+            }
+          }
+        });
+        res = await fetch("/api/check", { method: "POST", body: formData });
+      } else {
+        res = await fetch("/api/check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+      if (!res.ok) throw new Error("Request failed");
+      const data = await res.json();
+      setReport(data);
+      setToast({
+        open: true,
+        message: "Report generated",
+        severity: "success",
+      });
+    } catch (err) {
+      setToast({
+        open: true,
+        message: "Unable to run check. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApplySuggestedFix = (text) => {
+    setFormState((prev) => ({ ...prev, marketingCopy: text }));
+  };
+
+  const handleExport = () => {
+    if (!report) return;
+    const blob = new Blob([JSON.stringify(report, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "compliance-report.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
+          AI Compliance Gate
+        </Typography>
+        <Typography
+          variant="h3"
+          sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}
+        >
+          Submit content and get an instant compliance report
+        </Typography>
+        <Typography color="text.secondary">
+          Validate claims, assets, and disclosures before you launch campaigns.
+        </Typography>
+      </Box>
+
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12} md={6}>
+          <SubmissionForm
+            value={formState}
+            onChange={setFormState}
+            onSubmit={handleSubmit}
+            loading={loading}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <ReportView
+            report={report}
+            onApplySuggestedFix={handleApplySuggestedFix}
+            onExport={handleExport}
+            marketingCopy={formState.marketingCopy}
+          />
+        </Grid>
+      </Grid>
+
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={4000}
+        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setToast((t) => ({ ...t, open: false }))}
+          severity={toast.severity}
+          sx={{ width: "100%" }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
+    </Container>
+  );
+}
