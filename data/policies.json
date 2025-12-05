@@ -1,5 +1,6 @@
 {
   "productCategories": [
+    { "name": "Weight loss", "regulated": true, "requires_prescreen": true },
     { "name": "OTC drugs", "regulated": true, "requires_prescreen": true },
     { "name": "Food/Dietary Supplements", "regulated": true, "requires_prescreen": true },
     { "name": "Alcohol", "regulated": true, "requires_prescreen": true },

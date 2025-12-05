@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Environment Setup
+
+Create a `.env.local` file in the root directory with:
+
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Get your Gemini API key from: https://makersuite.google.com/app/apikey
+
+**Note:** The image vision analysis requires a valid Gemini API key. Without it, the system will fall back to basic heuristics for image checking.
+
 ## Getting Started
 
 First, run the development server:

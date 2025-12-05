@@ -641,7 +641,24 @@ export default function ReportView({
             <Divider />
 
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-              Image preview (mocked annotations)
+              Image preview
+              {boxes.length > 0 && (
+                <Typography
+                  component="span"
+                  sx={{
+                    ml: 1,
+                    px: 1,
+                    py: 0.25,
+                    backgroundColor: "rgba(255,0,0,0.1)",
+                    color: "#b91c1c",
+                    borderRadius: 1,
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {boxes.length} region{boxes.length > 1 ? "s" : ""} highlighted
+                </Typography>
+              )}
             </Typography>
             <Stack spacing={1}>
               <ImagePreview imageUrl={previewUrl} boxes={boxes} />
