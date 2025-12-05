@@ -5,7 +5,7 @@ const REQUIRED_FIELDS = ["copy", "platform", "productCategory"];
 
 export async function POST(req) {
   try {
-    const contentType = req.headers.get("content-type") || "";
+    const contentType = (req.headers.get("content-type") || "").toLowerCase();
     let payload = {};
 
     if (contentType.includes("multipart/form-data")) {
@@ -24,8 +24,16 @@ export async function POST(req) {
             ? advertiserProof
             : null,
       };
-    } else {
-      const body = await req.json();
+    } else if (contentType.includes("application/json")) {
+      let body;
+      try {
+        body = await req.json();
+      } catch (_err) {
+        return NextResponse.json(
+          { error: "Invalid JSON body" },
+          { status: 400 }
+        );
+      }
       payload = {
         copy: body.copy || "",
         platform: body.platform || "",
@@ -35,6 +43,14 @@ export async function POST(req) {
         imageUrl: body.imageUrl || "",
         advertiserProof: null,
       };
+    } else {
+      return NextResponse.json(
+        {
+          error:
+            "Unsupported content-type. Use multipart/form-data or application/json.",
+        },
+        { status: 415 }
+      );
     }
 
     const missing = REQUIRED_FIELDS.filter(
