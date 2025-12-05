@@ -1,28 +1,59 @@
-export async function POST() {
-  const now = new Date().toISOString();
+import { NextResponse } from "next/server";
+import { complianceEngine } from "../../../lib/complianceEngine";
 
-  const mock = {
-    complianceScore: 10,
-    status: "fail",
-    violations: [
-      {
-        id: "POL-1-001",
-        severity: "critical",
-        category: "Prohibited claims",
-        offendingText: "guaranteed results",
-        offendingImageRegion: null,
-        policyReference: "POL-1",
-        explanation: "Promises of guaranteed results are prohibited.",
-        suggestedFix: "Replace with: 'Results vary; consult your doctor.'",
-        confidence: 0.98,
-      },
-    ],
-    meta: {
-      platform: "Meta",
-      productCategory: "Weight loss",
-      timestamp: now,
-    },
-  };
+const REQUIRED_FIELDS = ["copy", "platform", "productCategory"];
 
-  return Response.json(mock, { status: 200 });
+export async function POST(req) {
+  try {
+    const contentType = req.headers.get("content-type") || "";
+    let payload = {};
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      const file = formData.get("imageFile");
+      const advertiserProof = formData.get("advertiserProof");
+      payload = {
+        copy: formData.get("copy") || "",
+        platform: formData.get("platform") || "",
+        productCategory: formData.get("productCategory") || "",
+        creativeType: formData.get("creativeType") || "",
+        imageFile: file && typeof file === "object" ? file : null,
+        imageUrl: formData.get("imageUrl") || "",
+        advertiserProof:
+          advertiserProof && typeof advertiserProof === "object"
+            ? advertiserProof
+            : null,
+      };
+    } else {
+      const body = await req.json();
+      payload = {
+        copy: body.copy || "",
+        platform: body.platform || "",
+        productCategory: body.productCategory || "",
+        creativeType: body.creativeType || "",
+        imageFile: null,
+        imageUrl: body.imageUrl || "",
+        advertiserProof: null,
+      };
+    }
+
+    const missing = REQUIRED_FIELDS.filter(
+      (f) => !payload[f] || !String(payload[f]).trim()
+    );
+    if (missing.length) {
+      return NextResponse.json(
+        { error: `Missing required fields: ${missing.join(", ")}` },
+        { status: 400 }
+      );
+    }
+
+    const report = await complianceEngine(payload);
+    return NextResponse.json(report, { status: 200 });
+  } catch (err) {
+    console.error("POST /api/check error", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }

@@ -21,8 +21,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import ImagePreview from "./ImagePreview";
 
-const platforms = ["Meta", "Google Ads", "TikTok", "Other"];
-const categories = ["ED", "Hair loss", "Weight loss", "OTC", "Rx", "Cosmetic"];
+const platforms = ["Meta", "Facebook", "Instagram", "Google Ads", "TikTok"];
+const categories = ["ED", "Hair loss", "Weight loss"];
 const creativeTypes = ["Single image", "Carousel", "Video"];
 
 export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
@@ -36,10 +36,9 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
     const next = {};
     if (!value.marketingCopy.trim())
       next.marketingCopy = "Marketing copy is required.";
-    if (value.imageMode === "upload" && !value.imageFile)
-      next.imageFile = "Upload an image.";
-    if (value.imageMode === "url" && !value.imageUrl.trim())
-      next.imageUrl = "Image URL is required.";
+    if (value.imageMode === "upload" && !value.imageFile && !value.imageUrl) {
+      // Optional image; no error when both missing.
+    }
     if (!value.platform) next.platform = "Select a platform.";
     if (!value.category) next.category = "Select a category.";
     if (!value.creativeType) next.creativeType = "Select a creative type.";
@@ -209,13 +208,6 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
               }
             />
 
-            <TextField
-              label="Variant name (optional)"
-              value={value.variantName}
-              onChange={(e) => handleField("variantName", e.target.value)}
-              placeholder="e.g., Summer campaign - Variant A"
-            />
-
             <Divider />
 
             <Box>
@@ -242,7 +234,6 @@ export default function SubmissionForm({ value, onChange, onSubmit, loading }) {
                     category: "Weight loss",
                     creativeType: "Single image",
                     advertiserProof: null,
-                    variantName: "",
                   })
                 }
               >

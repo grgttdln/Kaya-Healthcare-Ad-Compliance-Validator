@@ -22,7 +22,6 @@ export default function CompliancePage() {
     category: "Weight loss",
     creativeType: "Single image",
     advertiserProof: null,
-    variantName: "",
   });
   const [toast, setToast] = React.useState({
     open: false,
@@ -31,13 +30,24 @@ export default function CompliancePage() {
   });
 
   const handleSubmit = async (payload) => {
+    // Normalize field names to match API expectations
+    const normalized = {
+      copy: payload.marketingCopy,
+      platform: payload.platform,
+      productCategory: payload.category,
+      creativeType: payload.creativeType,
+      imageFile: payload.imageFile,
+      imageUrl: payload.imageUrl,
+      advertiserProof: payload.advertiserProof,
+    };
+
     setLoading(true);
     try {
-      const hasFile = payload.imageFile || payload.advertiserProof;
+      const hasFile = !!normalized.imageFile || !!normalized.advertiserProof;
       let res;
       if (hasFile) {
         const formData = new FormData();
-        Object.entries(payload).forEach(([key, value]) => {
+        Object.entries(normalized).forEach(([key, value]) => {
           if (value !== null && value !== undefined) {
             if (key === "imageFile" || key === "advertiserProof") {
               if (value) formData.append(key, value);
@@ -51,7 +61,7 @@ export default function CompliancePage() {
         res = await fetch("/api/check", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(normalized),
         });
       }
       if (!res.ok) throw new Error("Request failed");

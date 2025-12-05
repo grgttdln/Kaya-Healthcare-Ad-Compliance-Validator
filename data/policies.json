@@ -1,12 +1,69 @@
 {
-  "prohibitedWords": ["cure", "miracle", "guaranteed results", "FDA-approved"],
-  "platformOverrides": {
-    "Meta": {
-      "beforeAfter": "critical",
-      "medicalClaims": "critical"
+  "productCategories": [
+    { "name": "OTC drugs", "regulated": true, "requires_prescreen": true },
+    { "name": "Food/Dietary Supplements", "regulated": true, "requires_prescreen": true },
+    { "name": "Alcohol", "regulated": true, "requires_prescreen": true },
+    { "name": "Milk Code products", "regulated": true, "requires_prescreen": true },
+    { "name": "Airline promo fares", "regulated": true, "requires_prescreen": true },
+    { "name": "Consumer Electronics", "regulated": false, "requires_prescreen": false },
+    { "name": "Cosmetics", "regulated": false, "requires_prescreen": false }
+  ],
+  "claimsRequiringPreScreen": [
+    { "id": "PRE-1", "slug": "no1_claim", "description": "No.1 / leadership claims need substantiation and pre-screen", "examples": ["No.1 brand", "Leading product"] },
+    { "id": "PRE-2", "slug": "exclusivity", "description": "Exclusive / only brand claims", "examples": ["only product", "exclusive solution"] },
+    { "id": "PRE-3", "slug": "absolute", "description": "Absolute / guaranteed outcomes", "examples": ["100% guaranteed", "guaranteed results"] },
+    { "id": "PRE-4", "slug": "comparative", "description": "Comparative claims against competitors", "examples": ["better than X", "beats competitor"] },
+    { "id": "PRE-5", "slug": "superiority", "description": "Superiority claims", "examples": ["superior", "best in class"] },
+    { "id": "PRE-6", "slug": "testimonial_performance", "description": "Testimonials with performance claims", "examples": ["lost 10kg", "cured my condition"] },
+    { "id": "PRE-7", "slug": "sexy_tones", "description": "Sexy tones / exposure of body parts", "examples": ["provocative pose", "revealing clothing"] },
+    { "id": "PRE-8", "slug": "direct_brand_comparison", "description": "Direct brand-identified comparisons", "examples": ["Brand A vs Brand B"] }
+  ],
+  "base_rules": [
+    {
+      "id": "POL-1",
+      "title": "Prohibited Claims",
+      "pattern": ["\\bcure\\b", "miracle", "guaranteed results", "100% guaranteed"],
+      "severity": "critical"
     },
-    "Google Ads": {
-      "medicalClaims": "warning"
+    {
+      "id": "POL-2",
+      "title": "Required Disclaimers",
+      "pattern": ["Consult your doctor", "Results may vary", "Rx required"],
+      "severity": "info"
+    },
+    {
+      "id": "POL-3",
+      "title": "False FDA Claims",
+      "pattern": ["FDA-approved", "FDA cleared"],
+      "severity": "critical"
+    },
+    {
+      "id": "POL-4",
+      "title": "Before/After Imagery",
+      "pattern": ["before", "after"],
+      "severity": "warning"
+    },
+    {
+      "id": "POL-5",
+      "title": "Nudity / Sensitive Exposure",
+      "pattern": ["nudity", "exposed body parts", "sexual"],
+      "severity": "critical"
+    }
+  ],
+  "prohibited_phrases": ["cure", "miracle", "guaranteed results", "100% guaranteed", "FDA-approved"],
+  "required_disclaimers": ["Consult your doctor", "Results may vary", "Rx required"],
+  "platform_overrides": {
+    "meta": {
+      "POL-4": { "severity": "critical" },
+      "POL-5": { "severity": "critical" },
+      "additional_banned": ["before/after", "nudity", "sexual"]
+    },
+    "google": {
+      "additional_banned": ["miracle cure"]
+    },
+    "tiktok": {
+      "POL-5": { "severity": "critical" },
+      "additional_banned": ["before/after"]
     }
   }
 }
