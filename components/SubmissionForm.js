@@ -27,6 +27,7 @@ export default function SubmissionForm({
   value,
   onChange,
   onSubmit,
+  onReset,
   loading,
   categories = ["OTC drugs", "Food/Dietary Supplements", "Alcohol"],
 }) {
@@ -221,7 +222,7 @@ export default function SubmissionForm({
                 variant="text"
                 color="secondary"
                 disabled={loading}
-                onClick={() =>
+                onClick={() => {
                   onChange({
                     marketingCopy: "",
                     imageMode: "upload",
@@ -230,8 +231,9 @@ export default function SubmissionForm({
                     platform: "Meta",
                     category: "Weight loss",
                     categoryCustom: "",
-                  })
-                }
+                  });
+                  onReset?.();
+                }}
               >
                 Reset
               </Button>

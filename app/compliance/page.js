@@ -134,17 +134,18 @@ export default function CompliancePage() {
         </Typography>
       </Box>
 
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item xs={12} md={6}>
+      <Grid container spacing={3} alignItems="stretch" direction="column">
+        <Grid item xs={12}>
           <SubmissionForm
             value={formState}
             onChange={setFormState}
             onSubmit={handleSubmit}
+            onReset={() => setReport(null)}
             loading={loading}
             categories={policies.productCategories?.map((c) => c.name) || []}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <ReportView
             report={report}
             onApplySuggestedFix={handleApplySuggestedFix}
