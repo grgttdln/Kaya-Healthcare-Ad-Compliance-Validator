@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import Chip from "@mui/material/Chip";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -27,18 +27,22 @@ export default function Header() {
         <Toolbar disableGutters>
           <Stack
             direction="row"
-            spacing={1.5}
+            spacing={1}
             alignItems="center"
             sx={{ flexGrow: 1 }}
           >
-            <Chip
-              label="AdSafeCare"
-              color="primary"
-              variant="filled"
-              sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
-            />
-            <Typography variant="body2" color="text.secondary">
-              Compliance Validator for Healthcare Ads
+            <Typography
+              component={Link}
+              href="/"
+              variant="h6"
+              sx={{
+                fontWeight: 800,
+                letterSpacing: "-0.02em",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              AdSafeCare
             </Typography>
           </Stack>
 

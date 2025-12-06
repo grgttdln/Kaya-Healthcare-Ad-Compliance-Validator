@@ -120,16 +120,32 @@ export default function CompliancePage() {
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
       <Box sx={{ mb: 4 }}>
-        <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
+        <Typography
+          variant="overline"
+          color="primary"
+          sx={{ fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.08em" }}
+        >
           AdSafeCare
         </Typography>
         <Typography
           variant="h3"
-          sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}
+          sx={{
+            fontWeight: 900,
+            letterSpacing: "-0.02em",
+            fontSize: { xs: "2.2rem", md: "2.7rem" },
+            lineHeight: 1.15,
+          }}
         >
           Submit content and get an instant compliance report
         </Typography>
-        <Typography color="text.secondary">
+        <Typography
+          color="text.secondary"
+          sx={{
+            fontSize: { xs: "1.02rem", md: "1.08rem" },
+            fontWeight: 500,
+            maxWidth: 760,
+          }}
+        >
           Validate claims, assets, and disclosures before you launch campaigns.
         </Typography>
       </Box>

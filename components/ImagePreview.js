@@ -7,6 +7,8 @@ import Paper from "@mui/material/Paper";
 
 // Simple mocked preview with optional bounding boxes.
 export default function ImagePreview({ imageUrl, boxes = [] }) {
+  if (!imageUrl) return null;
+
   return (
     <Paper
       variant="outlined"
@@ -22,18 +24,12 @@ export default function ImagePreview({ imageUrl, boxes = [] }) {
         backgroundColor: "grey.50",
       }}
     >
-      {imageUrl ? (
-        <Box
-          component="img"
-          src={imageUrl}
-          alt="Creative preview"
-          sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      ) : (
-        <Typography color="text.secondary">
-          Image preview will appear here.
-        </Typography>
-      )}
+      <Box
+        component="img"
+        src={imageUrl}
+        alt="Creative preview"
+        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
 
       {boxes.map((box, idx) => (
         <Box
