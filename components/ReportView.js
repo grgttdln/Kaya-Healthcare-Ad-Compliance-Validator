@@ -64,6 +64,7 @@ export default function ReportView({
   report,
   onApplySuggestedFix,
   onExport,
+  onExportPdf = () => {},
   marketingCopy,
   imagePreviewUrl,
 }) {
@@ -152,14 +153,35 @@ export default function ReportView({
         subheader="Compliance score and flagged issues."
         sx={{ pb: 0 }}
         action={
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={onExport}
-            disabled={!report}
-          >
-            Export Compliance Report JSON
-          </Button>
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={onExport}
+              disabled={!report}
+              sx={{
+                fontWeight: 700,
+                boxShadow: "0 8px 18px rgba(15,23,42,0.12)",
+              }}
+            >
+              Export JSON
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={onExportPdf}
+              disabled={!report}
+              sx={{
+                fontWeight: 700,
+                borderWidth: 2,
+                textTransform: "none",
+              }}
+            >
+              Export PDF
+            </Button>
+          </Stack>
         }
       />
       <CardContent

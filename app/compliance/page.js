@@ -10,6 +10,7 @@ import Alert from "@mui/material/Alert";
 import SubmissionForm from "../../components/SubmissionForm";
 import ReportView from "../../components/ReportView";
 import policies from "../../data/policies.json";
+import jsPDF from "jspdf";
 
 export default function CompliancePage() {
   const [report, setReport] = React.useState(null);
@@ -117,6 +118,86 @@ export default function CompliancePage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportPdf = () => {
+    if (!report) return;
+    const doc = new jsPDF();
+    const meta = report.meta || {};
+    const violations = report.violations || [];
+    const score = report.complianceScore ?? "N/A";
+    const status = report.status ?? "N/A";
+
+    let y = 14;
+    const maxWidth = 180;
+
+    const addText = (text, fontSize = 11, gap = 6, fontStyle = "normal") => {
+      doc.setFontSize(fontSize);
+      doc.setFont("helvetica", fontStyle);
+      const lines = doc.splitTextToSize(String(text), maxWidth);
+      doc.text(lines, 10, y);
+      y += lines.length * (gap - 1) + 2;
+      maybeAddPage();
+    };
+
+    const addHeading = (text) => {
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text(text, 10, y);
+      y += 8;
+      maybeAddPage();
+    };
+
+    const maybeAddPage = () => {
+      if (y > 280) {
+        doc.addPage();
+        y = 14;
+      }
+    };
+
+    addHeading("Compliance Report");
+    addText(`Score: ${score}`, 12, 7, "bold");
+    addText(`Status: ${status}`, 12, 7, "bold");
+    addText(`Platform: ${meta.platform || "N/A"}`);
+    addText(`Category: ${meta.productCategory || "N/A"}`);
+    addText(`Timestamp: ${meta.timestamp || ""}`);
+
+    y += 4;
+    addHeading(`Violations (${violations.length})`);
+
+    if (!violations.length) {
+      addText("No violations detected.");
+    } else {
+      violations.forEach((v, idx) => {
+        addText(
+          `• ${v.category || "Violation"} [${v.severity || "info"}]`,
+          11,
+          6,
+          "bold"
+        );
+        if (v.policyReference)
+          addText(`Rule: ${v.policyReference}`, 10, 6, "normal");
+        if (v.explanation) addText(`Why: ${v.explanation}`, 10, 6, "normal");
+        if (v.offendingText)
+          addText(`Flagged text: "${v.offendingText}"`, 10, 6, "normal");
+        if (v.suggestedFix)
+          addText(`Suggested fix: ${v.suggestedFix}`, 10, 7, "normal");
+        y += 2;
+        maybeAddPage();
+      });
+    }
+
+    y += 4;
+    addHeading("Raw JSON");
+    const rawJsonLines = doc.splitTextToSize(
+      JSON.stringify(report, null, 2),
+      maxWidth
+    );
+    rawJsonLines.forEach((line) => {
+      addText(line, 8, 5, "normal");
+    });
+
+    doc.save("compliance-report.pdf");
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
       <Box sx={{ mb: 4 }}>
@@ -166,6 +247,7 @@ export default function CompliancePage() {
             report={report}
             onApplySuggestedFix={handleApplySuggestedFix}
             onExport={handleExport}
+            onExportPdf={handleExportPdf}
             marketingCopy={formState.marketingCopy}
             imagePreviewUrl={imagePreviewUrl}
           />
