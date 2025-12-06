@@ -152,6 +152,12 @@ export default function ReportView({
         title="Report"
         subheader="Compliance score and flagged issues."
         sx={{ pb: 0 }}
+        titleTypographyProps={{
+          fontWeight: 800,
+          fontSize: 18,
+          letterSpacing: "-0.01em",
+        }}
+        subheaderTypographyProps={{ fontSize: 13, color: "text.secondary" }}
         action={
           <Stack direction="row" spacing={1}>
             <Button
@@ -198,24 +204,26 @@ export default function ReportView({
               spacing={2}
               alignItems="center"
               flexWrap="wrap"
+              sx={{ maxWidth: "100%" }}
             >
               <Chip
                 label={`Score: ${report.complianceScore}/100`}
                 color={statusColor}
                 variant="filled"
-                sx={{ fontWeight: 700 }}
+                sx={{ fontWeight: 800, fontSize: 13 }}
               />
               <Chip
                 label={report.status === "pass" ? "Pass" : "Fail"}
                 color={statusColor}
                 variant="outlined"
+                sx={{ fontWeight: 700, fontSize: 13 }}
               />
               {report?.meta?.platform && (
                 <Chip
                   label={`${report.meta.platform}`}
                   size="small"
                   variant="outlined"
-                  sx={{ fontWeight: 600 }}
+                  sx={{ fontWeight: 700, fontSize: 12 }}
                 />
               )}
               {report?.meta?.platformStrictness && (
@@ -246,7 +254,10 @@ export default function ReportView({
 
             <Stack spacing={1.75}>
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 800, letterSpacing: "-0.01em" }}
+                >
                   Violations
                 </Typography>
               </Stack>
